@@ -1,18 +1,11 @@
-import resolve from '@rollup/plugin-node-resolve';
-import babel from 'rollup-plugin-babel';
-import terser from 'rollup-plugin-terser';
+import hashbang from 'rollup-plugin-hashbang';
+import { terser } from 'rollup-plugin-terser';
 
 export default {
-  input: 'src/cli.js',
+  input: 'index.js',
   output: {
     file: 'lib/index.js',
-    format: 'esm'
+    format: 'cjs'
   },
-  plugins: [
-    resolve(),
-    babel({
-      exclude: 'node_modules/**'
-    }),
-    terser()
-  ]
+  plugins: [hashbang(), terser()]
 };
