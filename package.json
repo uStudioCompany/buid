@@ -1,0 +1,46 @@
+{
+  "name": "bid",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "author": "Dmytro Vasylkivskyi",
+  "scripts": {
+    "test": "babel-node test/index.js",
+    "clean": "rimraf lib",
+    "copy": "copyfiles package.json LICENSE README.md lib",
+    "build": "yarn clean && yarn copy && rollup -c",
+    "release": "standard-version",
+    "publication": "yarn build && yarn publish lib"
+  },
+  "dependencies": {
+    "yargs": "^15.3.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/node": "^7.8.7",
+    "@babel/preset-env": "^7.9.6",
+    "@rollup/plugin-node-resolve": "^7.1.3",
+    "copyfiles": "^2.2.0",
+    "eslint": "^7.0.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-prettier": "^3.1.3",
+    "husky": ">=4",
+    "lint-staged": ">=10",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-terser": "^5.3.0",
+    "standard-version": "^8.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": ["eslint --fix", "prettier --write"]
+  }
+}
