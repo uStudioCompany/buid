@@ -33,7 +33,7 @@ const {
   v: {
     alias: 'verbose',
     type: 'boolean',
-    describe: 'Enable verboseLog logging',
+    describe: 'Enable verbose logging',
     default: defaults.verbose
   }
 });
