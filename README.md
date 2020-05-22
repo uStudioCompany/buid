@@ -8,8 +8,8 @@ $ yarn add -D buid
 
 ## Options
 
-| Flag                | Data type | Description                                          | Default                                                                                       |
-|---------------------|-----------|------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| Flag                 | Data type | Description                                          | Default                                                                                       |
+|----------------------|-----------|------------------------------------------------------|-----------------------------------------------------------------------------------------------|
 | -f, --file           | string    | Path to the JSON file with data                      |                                                                                               |
 | -p, --path           | string[]  | Chain of keys corresponding to the arrays in objects | ['criteria', 'requirementGroups', 'requirements', 'optionDetails', 'optionGroups', 'options'] |
 | -s, --skip           | string[]  | Keys to skip while getting array in an object        | ['optionDetails']                                                                             |
