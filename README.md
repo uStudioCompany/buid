@@ -13,8 +13,8 @@ $ yarn add -D buid
 | `-f`<br />`--file`           | `string`    | Path to the JSON file with data                      |                                                                                                 |
 | `-p`<br />`--path`           | `string[]`  | Chain of keys corresponding to the arrays in objects | `['criteria', 'requirementGroups', 'requirements', 'optionDetails', 'optionGroups', 'options']` |
 | `-s`<br />`--skip`           | `string[]`  | Keys to skip while getting array in an object        | `['optionDetails']`                                                                             |
-| `-l`<br />`--segment-length` | `number`    | Length of corresponding id segment                   | 2                                                                                               |
-| `-v`<br /> `--verbose`       | `boolean`   | Enable verbose logging                               | false                                                                                           |
+| `-l`<br />`--segment-length` | `number`    | Length of corresponding id segment                   | `2`                                                                                               |
+| `-v`<br /> `--verbose`       | `boolean`   | Enable verbose logging                               | `false`                                                                                           |
 
 ## CLI usage
 
