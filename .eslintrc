@@ -4,9 +4,17 @@
     "es6": true,
     "node": true
   },
-  "extends": ["plugin:prettier/recommended", "airbnb-base"],
+  "extends": ["airbnb-base", "plugin:prettier/recommended"],
   "plugins": ["prettier", "import"],
+  "parser": "babel-eslint",
   "parserOptions": {
     "sourceType": "module"
+  },
+  "rules": {
+    "prettier/prettier": "error",
+    "no-use-before-define": "warn",
+    "no-console": "off",
+    "consistent-return": "warn",
+    "import/prefer-default-export": "off"
   }
 }

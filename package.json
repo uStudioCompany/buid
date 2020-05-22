@@ -5,19 +5,26 @@
   "license": "MIT",
   "author": "Dmytro Vasylkivskyi",
   "bin": {
-    "bid": "./cli.js"
+    "bid": "lib/cli.js"
   },
   "scripts": {
     "copy": "copyfiles package.json LICENSE README.md lib",
     "clean": "rimraf lib",
-    "build": "yarn clean && yarn copy && rollup -c",
+    "build": "yarn clean && yarn copy && babel src --out-dir lib",
     "release": "standard-version",
     "publication": "yarn build && yarn publish lib"
   },
   "dependencies": {
+    "chalk": "^4.0.0",
     "yargs": "^15.3.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.6",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-proposal-optional-chaining": "^7.9.0",
+    "@babel/preset-env": "^7.9.6",
+    "babel-eslint": "^10.1.0",
     "copyfiles": "^2.2.0",
     "eslint": "^7.0.0",
     "eslint-config-airbnb-base": "^14.1.0",
@@ -28,8 +35,6 @@
     "lint-staged": ">=10",
     "prettier": "^2.0.5",
     "rimraf": "^3.0.2",
-    "rollup-plugin-hashbang": "^2.2.2",
-    "rollup-plugin-terser": "^5.3.0",
     "standard-version": "^8.0.0"
   },
   "husky": {
