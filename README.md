@@ -25,6 +25,8 @@ $ buid -f category.json -l 2 -v -p criteria requirementGroups requirements optio
 ## Programmatic usage
 
 ```javascript
+import buid from 'buid';
+
 buid({
     file: 'category.json' // or an object itself,
     segmentLength: 2,
