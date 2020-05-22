@@ -11,6 +11,7 @@
     "copy": "copyfiles package.json LICENSE README.md lib",
     "clean": "rimraf lib",
     "build": "yarn clean && yarn copy && babel src --out-dir lib",
+    "test": "babel-node src/test.js",
     "release": "standard-version",
     "publication": "yarn build && yarn publish lib"
   },
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@babel/cli": "^7.8.4",
     "@babel/core": "^7.9.6",
+    "@babel/node": "^7.8.7",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-optional-chaining": "^7.9.0",
     "@babel/preset-env": "^7.9.6",
