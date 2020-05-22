@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import * as yargs from 'yargs';
-import bid, { defaults } from './bid';
+import buid, { defaults } from './buid';
 
 const {
   argv: { f: file, p: path, s: skip, l: segmentLength, v: verbose }
@@ -38,7 +38,7 @@ const {
   }
 });
 
-bid({
+buid({
   file,
   path,
   skip,

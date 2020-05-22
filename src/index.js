@@ -1,1 +1,1 @@
-export { default } from './bid';
+export { default } from './buid';

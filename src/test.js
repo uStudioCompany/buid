@@ -1,5 +1,5 @@
-import bid from './bid';
+import buid from './buid';
 
-bid({
+buid({
   file: 'category.json'
 });

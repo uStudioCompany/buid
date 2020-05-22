@@ -1,11 +1,11 @@
 {
-  "name": "bid",
+  "name": "buid",
   "version": "0.1.0",
   "main": "index.js",
   "license": "MIT",
-  "author": "Dmytro Vasylkivskyi",
+  "author": "uStudio Front-End Department",
   "bin": {
-    "bid": "lib/cli.js"
+    "bid": "cli.js"
   },
   "scripts": {
     "copy": "copyfiles package.json LICENSE README.md lib",
