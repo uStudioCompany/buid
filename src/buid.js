@@ -49,109 +49,119 @@ const buid = (options = {}) => {
   };
 
   const validate = ({ node, prevPath = null, currentPath, index, parent }) => {
-    const nextPath = getNextPath(currentPath);
+    return new Promise((resolve) => {
+      const nextPath = getNextPath(currentPath);
 
-    if (isArray(node)) {
-      return node.forEach((element, elementIndex) => {
-        validate({
-          node: element,
-          prevPath: currentPath,
-          currentPath: nextPath,
-          index: elementIndex + 1,
-          parent
-        });
-      });
-    }
+      if (isArray(node)) {
+        resolve(
+          node.forEach((element, elementIndex) => {
+            validate({
+              node: element,
+              prevPath: currentPath,
+              currentPath: nextPath,
+              index: elementIndex + 1,
+              parent
+            });
+          })
+        );
+      }
 
-    if (isObject(node)) {
-      // Skipping current path
-      if (inArray(skip, currentPath)) {
-        // Current path may be optional in the current node
-        if (currentPath in node) {
-          verboseLog(`Skipping ${currentPath}.\n`);
+      if (isObject(node)) {
+        // Skipping current path
+        if (inArray(skip, currentPath)) {
+          // Current path may be optional in the current node
+          if (currentPath in node) {
+            verboseLog(`Skipping ${currentPath}.\n`);
 
-          if (isArray(node[currentPath])) {
-            return node[currentPath].forEach((element) => {
+            if (isArray(node[currentPath])) {
+              resolve(
+                node[currentPath].forEach((element) => {
+                  validate({
+                    node: element[currentPath][nextPath],
+                    prevPath,
+                    currentPath: nextPath,
+                    parent: node
+                  });
+                })
+              );
+            }
+
+            resolve(
               validate({
-                node: element[currentPath][nextPath],
+                node: node[currentPath][nextPath],
                 prevPath,
                 currentPath: nextPath,
                 parent: node
-              });
-            });
+              })
+            );
+          }
+        }
+
+        // Validating ids
+        if (currentPath !== path[0] && 'id' in node) {
+          verboseLog(`Validating element ${node.id} identificator.`);
+
+          if (node.id.length !== idLength) {
+            errorLog(`Element id ${node.id} should be of length ${idLength}.`);
           }
 
-          return validate({
-            node: node[currentPath][nextPath],
-            prevPath,
-            currentPath: nextPath,
-            parent: node
-          });
-        }
-      }
+          const depth =
+            nonSkippablePaths.indexOf(pathMap[currentPath || prevPath]) *
+              segmentLength -
+            (currentPath ? segmentLength : 0);
+          const nodeId = node.id.slice(depth, depth + segmentLength);
 
-      // Validating ids
-      if (currentPath !== path[0] && 'id' in node) {
-        verboseLog(`Validating element ${node.id} identificator.`);
-
-        if (node.id.length !== idLength) {
-          errorLog(`Element id ${node.id} should be of length ${idLength}.`);
-        }
-
-        const depth =
-          nonSkippablePaths.indexOf(pathMap[currentPath || prevPath]) *
-            segmentLength -
-          (currentPath ? segmentLength : 0);
-        const nodeId = node.id.slice(depth, depth + segmentLength);
-
-        // Validating current node's id
-        if (+nodeId !== index) {
-          errorLog(
-            `Element id ${node.id} at position [${
-              depth / segmentLength + 1
-            }, ${nodeId}] should be equal to ${
-              index < 10 ? `0${index}` : index
-            }.`
-          );
-        }
-
-        // Validating node's id with parent's id
-        if ('id' in parent) {
-          verboseLog(
-            `Validating ${node.id} parent's ${parent.id} identificator.`
-          );
-
-          const nodeIdSegment = node.id.slice(0, depth);
-          const parentIdSegment = parent.id.slice(0, depth);
-
-          if (nodeIdSegment !== parentIdSegment) {
+          // Validating current node's id
+          if (+nodeId !== index) {
             errorLog(
-              `Element id ${node.id} should correctly inherit parent id ${parent.id}.`
+              `Element id ${node.id} at position [${
+                depth / segmentLength + 1
+              }, ${nodeId}] should be equal to ${
+                index < 10 ? `0${index}` : index
+              }.`
             );
           }
 
-          verboseLog('\n');
+          // Validating node's id with parent's id
+          if ('id' in parent) {
+            verboseLog(
+              `Validating ${node.id} parent's ${parent.id} identificator.`
+            );
+
+            const nodeIdSegment = node.id.slice(0, depth);
+            const parentIdSegment = parent.id.slice(0, depth);
+
+            if (nodeIdSegment !== parentIdSegment) {
+              errorLog(
+                `Element id ${node.id} should correctly inherit parent id ${parent.id}.`
+              );
+            }
+
+            verboseLog('\n');
+          }
+        }
+
+        // Finish
+        if (!currentPath) {
+          resolve();
+        }
+
+        // Iterate over children of the current path
+        if (isArray(node[currentPath])) {
+          resolve(
+            node[currentPath].forEach((element, elementIndex) => {
+              validate({
+                node: element,
+                prevPath: currentPath,
+                currentPath: nextPath,
+                index: elementIndex + 1,
+                parent: node
+              });
+            })
+          );
         }
       }
-
-      // Finish
-      if (!currentPath) {
-        return;
-      }
-
-      // Iterate over children of the current path
-      if (isArray(node[currentPath])) {
-        return node[currentPath].forEach((element, elementIndex) => {
-          validate({
-            node: element,
-            prevPath: currentPath,
-            currentPath: nextPath,
-            index: elementIndex + 1,
-            parent: node
-          });
-        });
-      }
-    }
+    }).catch(({ message }) => errorLog(message));
   };
 
   systemLog(`Starting validation process...`);
@@ -159,9 +169,7 @@ const buid = (options = {}) => {
   validate({
     node: content,
     currentPath: path[0]
-  });
-
-  systemLog(`\nFinished validation process.`);
+  }).then(() => systemLog(`\nFinished validation process.`));
 };
 
 export default buid;
