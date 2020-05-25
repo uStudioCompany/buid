@@ -20,7 +20,7 @@
   "scripts": {
     "copy": "copyfiles package.json LICENSE README.md lib",
     "clean": "rimraf lib",
-    "build": "yarn clean && yarn copy && babel src --out-dir lib",
+    "build": "yarn clean && yarn copy && BABEL_ENV=production babel src --out-dir lib",
     "test": "babel-node src/test.js",
     "release": "standard-version",
     "publication": "yarn build && yarn publish lib"
@@ -37,6 +37,7 @@
     "@babel/plugin-proposal-optional-chaining": "^7.9.0",
     "@babel/preset-env": "^7.9.6",
     "babel-eslint": "^10.1.0",
+    "babel-preset-minify": "^0.5.1",
     "copyfiles": "^2.2.0",
     "eslint": "^7.0.0",
     "eslint-config-airbnb-base": "^14.1.0",

@@ -1,5 +1,13 @@
 {
   "presets": ["@babel/preset-env"],
-  "plugins": ["@babel/plugin-proposal-optional-chaining", "@babel/plugin-proposal-class-properties"],
-  "ignore": ["node_modules/**/*"]
+  "plugins": [
+    "@babel/plugin-proposal-optional-chaining",
+    "@babel/plugin-proposal-class-properties"
+  ],
+  "env": {
+    "production": {
+      "presets": ["minify"]
+    }
+  },
+  "ignore": ["node_modules/**/*", "src/test.js"]
 }
