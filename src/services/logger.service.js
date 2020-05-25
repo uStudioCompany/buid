@@ -1,21 +1,23 @@
 import chalk from 'chalk';
 
-export class LoggerService {
-  constructor(verbose) {
-    this.verbose = verbose;
-  }
-
-  verboseLog = (...message) => {
-    if (this.verboseLog) {
+export function LoggerService(verbose) {
+  const verboseLog = (...message) => {
+    if (verbose) {
       console.log(chalk.grey(...message));
     }
   };
 
-  systemLog = (...message) => {
+  const systemLog = (...message) => {
     console.log(chalk.bold(...message));
   };
 
-  errorLog = (...message) => {
+  const errorLog = (...message) => {
     console.log(chalk.red(...message));
+  };
+
+  return {
+    verboseLog,
+    systemLog,
+    errorLog
   };
 }

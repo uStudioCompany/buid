@@ -1,11 +1,15 @@
-export class UtilService {
-  isArray = (element) => Array.isArray(element);
+export function UtilService() {
+  const isArray = (element) => Array.isArray(element);
 
-  isObject = (element) => {
-    return (
-      typeof element === 'object' && element !== null && !this.isArray(element)
-    );
+  const isObject = (element) => {
+    return typeof element === 'object' && element !== null && !isArray(element);
   };
 
-  inArray = (array, element) => this.isArray(array) && array.includes(element);
+  const inArray = (array, element) => isArray(array) && array.includes(element);
+
+  return {
+    isArray,
+    inArray,
+    isObject
+  };
 }
