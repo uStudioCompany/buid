@@ -16,7 +16,13 @@ export const defaults = {
   verbose: false
 };
 
-const buid = (options = {}) => {
+const buid = (options) => {
+  if (!options || !('file' in options)) {
+    throw new ReferenceError(
+      'You must specify a path to the file or an object to be validated.'
+    );
+  }
+
   const {
     file,
     path = defaults.path,
@@ -169,7 +175,11 @@ const buid = (options = {}) => {
   validate({
     node: content,
     currentPath: path[0]
-  }).then(() => systemLog(`\nFinished validation process.`));
+  }).then(() => {
+    systemLog(`\nFinished validation process.`);
+
+    process.exit(1);
+  });
 };
 
 export default buid;
