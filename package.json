@@ -20,7 +20,7 @@
   "scripts": {
     "copy": "copyfiles package.json LICENSE README.md lib",
     "clean": "rimraf lib",
-    "build": "yarn clean && yarn copy && BABEL_ENV=production babel src --out-dir lib",
+    "build": "yarn clean && yarn copy && BABEL_ENV=production babel src --out-dir lib --copy-files && rimraf lib/test.js",
     "test": "babel-node src/test.js",
     "release": "standard-version",
     "publication": "yarn build && yarn publish lib"
