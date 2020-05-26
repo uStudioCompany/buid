@@ -175,11 +175,17 @@ const buid = (options) => {
   validate({
     node: content,
     currentPath: path[0]
-  }).then(() => {
-    systemLog(`\nFinished validation process.`);
+  })
+    .then(() => {
+      systemLog(`\nFinished validation process.`);
 
-    process.exit(1);
-  });
+      process.exit(1);
+    })
+    .catch(({ message }) => {
+      errorLog(message);
+
+      process.exit(0);
+    });
 };
 
 export default buid;
