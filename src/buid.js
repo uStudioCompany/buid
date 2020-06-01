@@ -48,6 +48,8 @@ const buid = (options) => {
   const content =
     typeof file === 'object' ? file : JSON.parse(readFileSync(file).toString());
 
+  const errors = [];
+
   systemLog(`\nReading ${file}.\n`);
 
   const getNextPath = (pathSegment) => {
@@ -108,7 +110,9 @@ const buid = (options) => {
           verboseLog(`Validating element ${node.id} identificator.`);
 
           if (node.id.length !== idLength) {
-            errorLog(`Element id ${node.id} should be of length ${idLength}.`);
+            errors.push(
+              `Element id ${node.id} should be of length ${idLength}.`
+            );
           }
 
           const depth =
@@ -119,13 +123,20 @@ const buid = (options) => {
 
           // Validating current node's id
           if (+nodeId !== index) {
-            errorLog(
+            errors.push(
               `Element id ${node.id} at position [${
                 depth / segmentLength + 1
               }, ${nodeId}] should be equal to ${
                 index < 10 ? `0${index}` : index
               }.`
             );
+          }
+
+          const rest = node.id.slice(depth + segmentLength);
+
+          // Validating absence of excess symbols
+          if (rest.split('').some((symbol) => symbol !== '0')) {
+            errors.push(`Element id ${node.id} contains excess symbols.`);
           }
 
           // Validating node's id with parent's id
@@ -138,7 +149,7 @@ const buid = (options) => {
             const parentIdSegment = parent.id.slice(0, depth);
 
             if (nodeIdSegment !== parentIdSegment) {
-              errorLog(
+              errors.push(
                 `Element id ${node.id} should correctly inherit parent id ${parent.id}.`
               );
             }
@@ -170,21 +181,25 @@ const buid = (options) => {
     }).catch(({ message }) => errorLog(message));
   };
 
-  systemLog(`Starting validation process...`);
+  systemLog(`Starting validation process...\n`);
 
   validate({
     node: content,
     currentPath: path[0]
   })
     .then(() => {
+      if (errors.length) {
+        errors.forEach((error) => errorLog(error));
+      }
+
       systemLog(`\nFinished validation process.`);
 
-      process.exit(1);
+      process.exit(0);
     })
     .catch(({ message }) => {
       errorLog(message);
 
-      process.exit(0);
+      process.exit(1);
     });
 };
 
