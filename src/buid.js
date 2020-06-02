@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 
-import { Util, Logger } from './services';
+import { Util, Logger, Generator } from './services';
 
 export const defaults = {
   path: [
@@ -33,14 +33,7 @@ const buid = async (options) => {
     write
   } = options;
 
-  const {
-    inArray,
-    isObject,
-    isArray,
-    normalizeIndex,
-    pastZero,
-    modifyId
-  } = new Util(segmentLength);
+  const { inArray, isObject, isArray, pastZero } = new Util();
   const { verboseLog, systemLog, errorLog } = new Logger(verbose);
 
   const pathMap = path.reduce((map, currentPath, currentPathIndex) => {
@@ -96,8 +89,13 @@ const buid = async (options) => {
       );
       let fixedId = node.id;
 
+      const { insertIndexAt, modifyId, normalizeIndex } = new Generator({
+        depth,
+        segmentLength
+      });
+
       // Validating ids
-      if (currentPath !== path[0] && 'id' in node) {
+      if (currentPath !== path[0] && 'id' in node && node.id.length) {
         verboseLog(`Validating element ${node.id} identificator.`);
 
         // Validating id length
@@ -124,22 +122,23 @@ const buid = async (options) => {
 
         // Validating absence of excess symbols
         if (rest.split('').some((symbol) => symbol !== '0')) {
-          fixedId = `${node.id.slice(0, depth)}${normalizeIndex(
+          fixedId = insertIndexAt({
+            start: node.id,
+            end: node.id,
             index
-          )}${'0'.repeat(node.id.slice(depth + segmentLength).length)}`;
+          });
 
           errors.push(`Element id ${node.id} contains excess symbols.`);
         }
 
         // Validating parent id inheritance
         if ('id' in parent) {
-          const nodeIdSegment = node.id.slice(0, depth);
-          const parentIdSegment = parent.id.slice(0, depth);
-
-          if (nodeIdSegment !== parentIdSegment) {
-            fixedId = `${parent.id.slice(0, depth)}${normalizeIndex(
+          if (node.id.slice(0, depth) !== parent.id.slice(0, depth)) {
+            fixedId = insertIndexAt({
+              start: parent.id,
+              end: node.id,
               index
-            )}${'0'.repeat(node.id.slice(depth + segmentLength).length)}`;
+            });
 
             errors.push(
               `Element id ${node.id} should correctly inherit parent id ${parent.id}.`
@@ -148,7 +147,31 @@ const buid = async (options) => {
         }
       }
 
-      if (fixedId !== node.id && write) {
+      // Creating an id
+      if (!('id' in node) || !node.id.length) {
+        if (parent && 'id' in parent && prevPath !== path[0]) {
+          fixedId = modifyId(parent.id, depth, () => index);
+        } else {
+          fixedId = modifyId('0'.repeat(idLength), 0, () => index);
+        }
+
+        if (write !== undefined) {
+          systemLog(`Generated an id for element ${fixedId}.`);
+        } else {
+          errorLog(
+            `Encountered missing or empty id at ${currentPath}${
+              parent?.id ? ` ${parent.id}` : ''
+            }.`
+          );
+        }
+      }
+
+      if (
+        node?.id &&
+        node.id.length &&
+        fixedId !== node.id &&
+        write !== undefined
+      ) {
         systemLog(`Fixed element id ${node.id} -> ${fixedId}.`);
       }
 
@@ -216,6 +239,8 @@ const buid = async (options) => {
         };
       }
     }
+
+    console.log('\n');
   };
 
   systemLog(`Starting validation process...\n`);
@@ -228,6 +253,8 @@ const buid = async (options) => {
 
     if (errors.length) {
       errors.forEach((error) => errorLog(error));
+    } else {
+      systemLog(`No errors found.\n`);
     }
 
     if (write !== undefined) {
@@ -239,6 +266,8 @@ const buid = async (options) => {
 
         systemLog(`\nWrote fixed result to a file ${__dirname}/${write}.`);
       }
+
+      systemLog(`\nFinished validation process.`);
 
       return validatedContent;
     }
