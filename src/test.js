@@ -1,5 +1,12 @@
 import buid from './buid';
 
-buid({
-  file: 'data.json'
-});
+let data;
+
+(async () => {
+  data = await buid({
+    file: 'data.json',
+    write: ''
+  });
+
+  console.log(data);
+})();

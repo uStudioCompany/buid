@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 
-export function LoggerService(verbose) {
+export function Logger(verbose) {
   const verboseLog = (...message) => {
     if (verbose) {
       console.log(chalk.grey(...message));
@@ -8,7 +8,7 @@ export function LoggerService(verbose) {
   };
 
   const systemLog = (...message) => {
-    console.log(chalk.bold(...message));
+    console.log(chalk.bold.green(...message));
   };
 
   const errorLog = (...message) => {
