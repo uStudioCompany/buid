@@ -4,8 +4,9 @@ interface Options {
   skip?: string[];
   segmentLength?: number;
   verbose?: boolean;
+  write?: string;
 }
 
-declare function buid(options: Options): void;
+declare function buid<O extends object>(options: Options): O | void;
 
 export default buid;
