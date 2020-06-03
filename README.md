@@ -21,7 +21,7 @@ $ yarn add -D buid
 ## CLI usage
 
 ```shell script
-$ buid -f category.json -v
+$ buid -p category.json -v
 ```
 
 ## Programmatic usage
@@ -29,5 +29,5 @@ $ buid -f category.json -v
 ```javascript
 import buid from 'buid';
 
-buid({ file: 'category.json' /* or an object itself */ });
+buid({ path: 'category.json' /* or an object itself */ });
 ```
