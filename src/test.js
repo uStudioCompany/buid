@@ -1,6 +1,11 @@
 import buid from './buid';
 
-buid({
-  file: 'data.json',
-  write: ''
-});
+(async () => {
+  try {
+    await buid({
+      path: 'data.json'
+    });
+  } catch ({ message }) {
+    console.log(message);
+  }
+})();

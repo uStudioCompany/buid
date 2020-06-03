@@ -4,7 +4,7 @@ import { resolve } from 'path';
 import { Util, Logger, Generator } from './services';
 
 export const defaults = {
-  path: [
+  chain: [
     'criteria',
     'requirementGroups',
     'requirements',
@@ -12,34 +12,36 @@ export const defaults = {
     'optionGroups',
     'options'
   ],
+  fix: false,
   skip: ['optionDetails'],
   segmentLength: 2,
   verbose: false
 };
 
 const buid = async (options) => {
-  if (!options || !('file' in options)) {
+  if (!options || !('path' in options)) {
     throw new ReferenceError(
       'You must specify a path to the file or an object to be validated.'
     );
   }
 
   const {
-    file,
-    path = defaults.path,
+    path,
+    chain = defaults.chain,
+    fix = defaults.fix,
     skip = defaults.skip,
     segmentLength = defaults.segmentLength,
     verbose = defaults.verbose,
-    write
+    cli = false
   } = options;
 
   const { inArray, isObject, isArray, pastZero } = new Util();
-  const { verboseLog, systemLog, errorLog } = new Logger(verbose);
+  const { verboseLog, systemLog } = new Logger(verbose);
 
-  const pathMap = path.reduce((map, currentPath, currentPathIndex) => {
+  const pathMap = chain.reduce((map, currentPath, currentPathIndex) => {
     return Object.assign(map, {
       [currentPath]: inArray(skip, currentPath)
-        ? path[currentPathIndex + 1]
+        ? chain[currentPathIndex + 1]
         : currentPath
     });
   }, {});
@@ -48,14 +50,14 @@ const buid = async (options) => {
   const idLength = nonSkippablePaths.length * segmentLength;
 
   const content =
-    typeof file === 'object' ? file : JSON.parse(readFileSync(file).toString());
+    typeof path === 'object' ? path : JSON.parse(readFileSync(path).toString());
 
   const errors = [];
 
-  systemLog(`\nReading ${file}.\n`);
+  systemLog(`\nReading ${path}.\n`);
 
-  const getNextPath = (pathSegment) => {
-    return path?.[path.indexOf(pathSegment) + 1] || null;
+  const getNextPath = (chainSegment) => {
+    return chain?.[chain.indexOf(chainSegment) + 1] || null;
   };
 
   const validate = async ({
@@ -95,7 +97,7 @@ const buid = async (options) => {
       });
 
       // Validating ids
-      if (currentPath !== path[0] && 'id' in node && node.id.length) {
+      if (currentPath !== chain[0] && 'id' in node && node.id.length) {
         verboseLog(`Validating element ${node.id} identificator.`);
 
         // Validating id length
@@ -149,16 +151,16 @@ const buid = async (options) => {
 
       // Creating an id
       if (!('id' in node) || !node.id.length) {
-        if (parent && 'id' in parent && prevPath !== path[0]) {
+        if (parent && 'id' in parent && prevPath !== chain[0]) {
           fixedId = modifyId(parent.id, depth, () => index);
         } else {
           fixedId = modifyId('0'.repeat(idLength), 0, () => index);
         }
 
-        if (write !== undefined) {
+        if (fix) {
           systemLog(`Generated an id for element ${fixedId}.`);
         } else {
-          errorLog(
+          errors.push(
             `Encountered missing or empty id at ${currentPath}${
               parent?.id ? ` ${parent.id}` : ''
             }.`
@@ -166,12 +168,7 @@ const buid = async (options) => {
         }
       }
 
-      if (
-        node?.id &&
-        node.id.length &&
-        fixedId !== node.id &&
-        write !== undefined
-      ) {
+      if (node?.id && node.id.length && fixedId !== node.id && fix) {
         systemLog(`Fixed element id ${node.id} -> ${fixedId}.`);
       }
 
@@ -182,9 +179,9 @@ const buid = async (options) => {
         return newNode;
       }
 
-      // Skipping current path
+      // Skipping current chain
       if (inArray(skip, currentPath)) {
-        // Current path may be optional in the current node
+        // Current chain may be optional in the current node
         if (currentPath in node) {
           verboseLog(`Skipping ${currentPath}.\n`);
 
@@ -221,7 +218,7 @@ const buid = async (options) => {
         return newNode;
       }
 
-      // Iterate over children of the current path
+      // Iterate over children of the current chain
       if (isArray(node[currentPath])) {
         return {
           ...newNode,
@@ -245,41 +242,33 @@ const buid = async (options) => {
 
   systemLog(`Starting validation process...\n`);
 
-  try {
-    const validatedContent = await validate({
-      node: content,
-      currentPath: path[0]
-    });
+  const validatedContent = await validate({
+    node: content,
+    currentPath: chain[0]
+  });
 
-    if (errors.length) {
-      errors.forEach((error) => errorLog(error));
-    } else {
-      systemLog(`No errors found.\n`);
-    }
+  if (fix) {
+    if (cli) {
+      writeFileSync(
+        resolve(__dirname, `fixed-${path}`),
+        JSON.stringify(validatedContent, null, 2)
+      );
 
-    if (write !== undefined) {
-      if (write.length) {
-        writeFileSync(
-          resolve(__dirname, write),
-          JSON.stringify(validatedContent, null, 2)
-        );
-
-        systemLog(`\nWrote fixed result to a file ${__dirname}/${write}.`);
-      }
-
-      systemLog(`\nFinished validation process.`);
-
-      return validatedContent;
+      systemLog(`\nWrote fixed result to a file ${__dirname}/fixed-${path}.`);
     }
 
     systemLog(`\nFinished validation process.`);
 
-    process.exit(0);
-  } catch ({ message }) {
-    errorLog(message);
-
-    process.exit(1);
+    return validatedContent;
   }
+
+  if (errors.length) {
+    throw new SyntaxError(JSON.stringify(errors, null, 2));
+  } else {
+    systemLog(`No errors found.\n`);
+  }
+
+  systemLog(`\nFinished validation process.`);
 };
 
 export default buid;

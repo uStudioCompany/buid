@@ -11,13 +11,8 @@ export function Logger(verbose) {
     console.log(chalk.bold.green(...message));
   };
 
-  const errorLog = (...message) => {
-    console.log(chalk.red(...message));
-  };
-
   return {
     verboseLog,
-    systemLog,
-    errorLog
+    systemLog
   };
 }
