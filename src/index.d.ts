@@ -1,10 +1,10 @@
 interface Options {
-  file: string | object;
-  path?: string[];
+  path: string | object;
+  chain?: string[];
+  fix?: boolean;
   skip?: string[];
   segmentLength?: number;
   verbose?: boolean;
-  write?: string;
 }
 
 declare function buid<O extends object>(options: Options): O | void;
