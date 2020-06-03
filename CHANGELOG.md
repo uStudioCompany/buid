@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/uStudioCompany/buid/compare/v0.1.0...v0.3.0) (2020-06-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* Change options API, throw errors and return fixed data on `-f`
+
+### Features
+
+* Add excess symbols validation ([f99e1a5](https://github.com/uStudioCompany/buid/commit/f99e1a5319c9ac9aeea2587ddfb53a0e40c84008))
+* Add id fixing ([22aaa76](https://github.com/uStudioCompany/buid/commit/22aaa7652aece9468251728e9a3e369319d41f5e))
+* Add id generation ([eddac96](https://github.com/uStudioCompany/buid/commit/eddac96ded30a5a3d93bcc5af0516f2ee444f902))
+* Change options API, throw errors and return fixed data on `-f` ([18a4462](https://github.com/uStudioCompany/buid/commit/18a4462af6f56488f7b7ec092e7605a2f3ca8842))
+* Update type declaration ([01f8a79](https://github.com/uStudioCompany/buid/commit/01f8a799771c4f7dd324b4ff6d173b7804941dd8))
+
 ## [0.1.0](https://github.com/uStudioCompany/buid/compare/v0.1.0-beta.0...v0.1.0) (2020-05-28)
 
 
