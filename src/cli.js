@@ -17,11 +17,11 @@ const {
       alias: 'chain',
       type: 'array',
       describe: 'Chain of keys corresponding to the arrays in objects',
-      default: defaults.path
+      default: defaults.chain
     },
     f: {
       alias: 'fix',
-      type: 'string',
+      type: 'boolean',
       describe: 'Fix and return to a json file/object'
     },
     s: {
@@ -45,14 +45,16 @@ const {
   })
   .config();
 
-buid({
-  path,
-  chain,
-  fix,
-  skip,
-  segmentLength,
-  verbose,
-  cli: true
-});
+(async () => {
+  await buid({
+    path,
+    chain,
+    fix,
+    skip,
+    segmentLength,
+    verbose,
+    cli: true
+  });
 
-process.exit(0);
+  process.exit(0);
+})();

@@ -249,12 +249,14 @@ const buid = async (options) => {
 
   if (fix) {
     if (cli) {
+      const fixedPath = `fixed${path.slice(path.lastIndexOf('.'))}`;
+
       writeFileSync(
-        resolve(__dirname, `fixed-${path}`),
+        resolve(__dirname, fixedPath),
         JSON.stringify(validatedContent, null, 2)
       );
 
-      systemLog(`\nWrote fixed result to a file ${__dirname}/fixed-${path}.`);
+      systemLog(`\nWrote fixed result to a file ${__dirname}/${fixedPath}.`);
     }
 
     systemLog(`\nFinished validation process.`);
