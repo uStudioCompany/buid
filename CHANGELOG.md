@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/uStudioCompany/buid/compare/v0.3.0...v0.3.1) (2020-06-16)
+
+
+### Bug Fixes
+
+* Pass proper arguments through cli, wrap call in async IIFE ([5a8d5e0](https://github.com/uStudioCompany/buid/commit/5a8d5e0d0c042de907fa92d7e60340814ad9cb74))
+
 ## [0.3.0](https://github.com/uStudioCompany/buid/compare/v0.1.0...v0.3.0) (2020-06-03)
 
 
